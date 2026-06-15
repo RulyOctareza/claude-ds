@@ -1,0 +1,80 @@
+#!/usr/bin/env zsh
+# Claude Code CLI via DeepSeek Anthropic-compatible API.
+# Docs: https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code
+
+set -euo pipefail
+
+CONFIG_DIR="${HOME}/.config/deepseek"
+KEY_FILE="${CONFIG_DIR}/key.env"
+SETTINGS_FILE="${CONFIG_DIR}/claude-deepseek-settings.json"
+
+if [[ ! -f "${KEY_FILE}" ]]; then
+  echo "Buat dulu ${KEY_FILE} dari template:"
+  echo "  cp ${CONFIG_DIR}/key.env.example ${KEY_FILE}"
+  echo "  chmod 600 ${KEY_FILE}"
+  echo "Lalu isi DEEPSEEK_API_KEY dari https://platform.deepseek.com"
+  exit 1
+fi
+
+# shellcheck disable=SC1090
+source "${KEY_FILE}"
+
+if [[ -z "${DEEPSEEK_API_KEY:-}" || "${DEEPSEEK_API_KEY}" == sk-your-deepseek-api-key-here ]]; then
+  echo "Error: DEEPSEEK_API_KEY belum diisi di ${KEY_FILE}"
+  exit 1
+fi
+
+export ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic"
+export ANTHROPIC_AUTH_TOKEN="${DEEPSEEK_API_KEY}"
+export ANTHROPIC_API_KEY="${DEEPSEEK_API_KEY}"
+export ANTHROPIC_MODEL="deepseek-v4-pro[1m]"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="deepseek-v4-pro[1m]"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="deepseek-v4-pro[1m]"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="deepseek-v4-flash"
+export CLAUDE_CODE_SUBAGENT_MODEL="deepseek-v4-flash"
+export CLAUDE_CODE_EFFORT_LEVEL="max"
+export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+
+# Regenerate settings so auth overrides OAuth/keychain from Anthropic login.
+cat > "${SETTINGS_FILE}" <<EOF
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.deepseek.com/anthropic",
+    "ANTHROPIC_AUTH_TOKEN": "${DEEPSEEK_API_KEY}",
+    "ANTHROPIC_API_KEY": "${DEEPSEEK_API_KEY}",
+    "ANTHROPIC_MODEL": "deepseek-v4-pro[1m]",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "deepseek-v4-pro[1m]",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-v4-pro[1m]",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek-v4-flash",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "deepseek-v4-flash",
+    "CLAUDE_CODE_EFFORT_LEVEL": "max",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  }
+}
+EOF
+chmod 600 "${SETTINGS_FILE}"
+
+use_bare=false
+args=()
+
+for arg in "$@"; do
+  case "${arg}" in
+    --bare)
+      use_bare=true
+      ;;
+    --with-hooks)
+      # Default: hooks enabled (RTK, plugins, skills). Kept for compatibility.
+      ;;
+    *)
+      args+=("${arg}")
+      ;;
+  esac
+done
+
+claude_cmd=(claude --settings "${SETTINGS_FILE}")
+
+if [[ "${use_bare}" == true ]]; then
+  claude_cmd+=(--bare)
+fi
+
+exec "${claude_cmd[@]}" "${args[@]}"

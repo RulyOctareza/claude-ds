@@ -1,0 +1,3 @@
+# Live API config — never commit
+key.env
+claude-deepseek-settings.json
