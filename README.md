@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/preview/hero.png" alt="claude-ds — ilustrasi CLI hemat biaya lewat DeepSeek" width="100%">
+  <img src="docs/preview/hero.svg" alt="claude-ds — ilustrasi CLI hemat biaya lewat DeepSeek" width="100%">
 </p>
 
 <h1 align="center">claude-ds</h1>
