@@ -1,51 +1,93 @@
-# claude-ds
+<p align="center">
+  <img src="docs/preview/hero.png" alt="claude-ds — ilustrasi CLI hemat biaya lewat DeepSeek" width="100%">
+</p>
 
-Run **Claude Code** using **DeepSeek** models (R1, V4) via DeepSeek's Anthropic-compatible API endpoint.
+<h1 align="center">claude-ds</h1>
 
-Saves ~90% on API costs vs Anthropic direct, with no feature loss — same Claude Code CLI, different backend.
+<p align="center">
+  <b>Claude Code dengan backend DeepSeek — hemat sampai ~90% biaya API.</b><br>
+  CLI yang sama, model yang lebih murah
+</p>
 
-## Requirements
+<p align="center">
+  <img alt="Shell" src="https://img.shields.io/badge/Shell-bash%20%7C%20zsh-4EAA25?logo=gnubash&logoColor=white">
+  <img alt="Claude Code" src="https://img.shields.io/badge/Claude%20Code-CLI-D97757">
+  <img alt="DeepSeek" src="https://img.shields.io/badge/Backend-DeepSeek-4D6BFE">
+</p>
 
-- [Claude Code](https://claude.ai/code) installed (`npm install -g @anthropic-ai/claude-code`)
-- DeepSeek API key from [platform.deepseek.com](https://platform.deepseek.com)
+---
 
-## Install
+## ✨ Preview
+
+<p align="center">
+  <img src="docs/preview/hero.png" alt="Ilustrasi claude-ds" width="90%">
+</p>
+
+> **Catatan:** gambar di atas adalah *ilustrasi konsep*, bukan screenshot asli.
+
+---
+
+## 📖 Tentang
+
+Menjalankan **Claude Code** memakai model **DeepSeek** (R1, V4) lewat endpoint API yang
+kompatibel dengan Anthropic. Pengalaman CLI tetap sama, backend-nya saja yang berbeda —
+dengan penghematan biaya sekitar 90% dibanding Anthropic langsung.
+
+---
+
+## 📦 Prasyarat
+
+- [Claude Code](https://claude.ai/code) terpasang
+  ```bash
+  npm install -g @anthropic-ai/claude-code
+  ```
+- API key dari [platform.deepseek.com](https://platform.deepseek.com)
+
+---
+
+## 🚀 Instalasi
 
 ```bash
-# 1. Setup API key
+# 1. Simpan API key
+mkdir -p ~/.config/deepseek
 cp key.env.example ~/.config/deepseek/key.env
 chmod 600 ~/.config/deepseek/key.env
-# Edit ~/.config/deepseek/key.env — paste your DeepSeek API key
+# edit file di atas, paste API key DeepSeek
 
-# 2. Install the wrapper
+# 2. Pasang wrapper
 cp claude-ds /usr/local/bin/claude-ds
 chmod +x /usr/local/bin/claude-ds
 
-# Or symlink instead:
+# atau symlink
 # ln -sf "$PWD/claude-ds" ~/.local/bin/claude-ds
 ```
 
-## Usage
+---
+
+## 💻 Penggunaan
 
 ```bash
-claude-ds                    # Launch Claude Code via DeepSeek
-claude-ds --bare             # Launch without hooks/plugins
-claude-ds "some prompt"      # Run one-shot via stdin
+claude-ds                  # jalankan Claude Code via DeepSeek
+claude-ds --bare           # tanpa hooks/plugins
+claude-ds "some prompt"    # one-shot lewat stdin
 ```
 
-## How It Works
+---
 
-The wrapper:
+## ⚙️ Cara Kerja
 
-1. Reads `DEEPSEEK_API_KEY` from `~/.config/deepseek/key.env`
-2. Sets env vars: `ANTHROPIC_BASE_URL` → `api.deepseek.com/anthropic`, model → `deepseek-v4-pro[1m]` / `deepseek-v4-flash`
-3. Runs `claude --settings` with generated JSON config
+1. Wrapper membaca `DEEPSEEK_API_KEY` dari `~/.config/deepseek/key.env`
+2. Set environment: `ANTHROPIC_BASE_URL` → `api.deepseek.com/anthropic`,
+   model → `deepseek-v4-pro[1m]` / `deepseek-v4-flash`
+3. Menjalankan `claude --settings` dengan konfigurasi JSON yang di-generate
 
-No Anthropic login or OAuth needed — all traffic routes through DeepSeek's API.
+Tidak perlu login/OAuth Anthropic — semua trafik lewat API DeepSeek.
 
-## CI / Dev Containers
+---
 
-For automated environments, set these env vars directly instead of using `key.env`:
+## 🤖 CI / Dev Container
+
+Untuk environment otomatis, set env langsung:
 
 ```bash
 export ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic"
@@ -55,11 +97,13 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL="deepseek-v4-flash"
 export CLAUDE_CODE_SUBAGENT_MODEL="deepseek-v4-flash"
 export CLAUDE_CODE_EFFORT_LEVEL="max"
 
-claude --daemon  # or claude with your prompt
+claude --daemon
 ```
 
-## Notes
+---
 
-- Model IDs: `deepseek-v4-pro[1m]` (heavy reasoning), `deepseek-v4-flash` (fast/light)
-- Some Claude features (MCP server auth, Artifacts) may behave differently via DeepSeek
-- See [DeepSeek docs](https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code) for official integration guide
+## 📝 Catatan
+
+- `deepseek-v4-pro[1m]` untuk reasoning berat, `deepseek-v4-flash` untuk cepat/ringan
+- Beberapa fitur Claude (auth MCP server, Artifacts) bisa berperilaku berbeda via DeepSeek
+- Panduan integrasi resmi: [DeepSeek docs](https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code)
